@@ -6,13 +6,13 @@ const bcrypt = require('bcryptjs')
 const bodyParser = require('body-parser')
 const path = require('path')
 const Blog = require('./models/blog')
-const Comments = require('./models/comments')
+
 
 
 
 //Connect to DB
-mongoose.connect('mongodb+srv://Nuel:chuks@cluster0.ldv66.mongodb.net/gratis_blog?retryWrites=true&w=majority', {useNewUrlParser: true})
-// mongoose.connect('mongodb://localhost/gratis', {useNewUrlParser: true, useUnifiedTopology: true})
+// mongoose.connect('mongodb+srv://Nuel:chuks@cluster0.ldv66.mongodb.net/gratis_blog?retryWrites=true&w=majority', {useNewUrlParser: true})
+mongoose.connect('mongodb://localhost/gratis', {useNewUrlParser: true, useUnifiedTopology: true})
 
 
 //Middleware
@@ -146,6 +146,21 @@ app.delete('/deleteBlog', (req, res) => {
             res.send(err)
         }else if(blog){
             res.json(blog)
+        }else{
+            return null
+        }
+    })
+});
+
+//Add a comment to a blog
+app.put('/addComment', (req, res) => {
+    Blog.findById(req.body.id, (err, blog)=>{
+        if(err){
+            res.send(err)
+        }else if(blog){
+            blog.comments.push({name: req.body.name, comment: req.body.comment}) 
+            blog.save()
+            res.json(blog)           
         }else{
             return null
         }
