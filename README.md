@@ -10,4 +10,10 @@ a basic REST API for a blog
 . /////////
 
 #Tools used
+
 . node package manager
+
+
+#Note
+
+All requests are to be sent in json format via postman or any frontend application that can connect to the api. All request parameters can be found in the blog schema, comment schema and routes processing api requests e.g in req.body.commentIndex, commentIndex is the json key for api query. When searching by id use mongodb ids.

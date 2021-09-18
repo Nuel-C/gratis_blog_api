@@ -141,11 +141,17 @@ app.put('/updateBlog', (req, res) => {
 
 //Delete Blog
 app.delete('/deleteBlog', (req, res) => {
-    Blog.findByIdAndDelete(req.body.id, (err, blog)=>{
+    Blog.findById(req.body.id, (err, blog)=>{
         if(err){
             res.send(err)
         }else if(blog){
-            res.json(blog)
+            blog.comments.map((comments)=>{
+                Comments.findByIdAndDelete(comments, (err, comment)=>{
+                    console.log(comment)
+                })
+            })
+            blog.delete()
+            res.send(blog) 
         }else{
             return null
         }
@@ -174,6 +180,107 @@ app.put('/addComment', (req, res) => {
         }
     })
 });
+
+//Get single comment on a blog post
+app.post('/getSingleComment', (req, res)=>{
+    Blog.findById(req.body.blogId, (err, blog)=>{
+        if(err){
+            res.send(err)
+        }else if(blog){
+            index = blog.comments[req.body.commentIndex]
+            Comments.findById(index, (err, comment)=>{
+                if(err){
+                    res.send(err)
+                }else if(comment){
+                    res.send(comment)
+                }else if(!comment){
+                    res.send('No such comment')
+                }  
+            })
+        }else{
+            return null
+        }
+    })
+})
+
+//Get all comments on a blog post as an array of objects
+app.post('/getAllBlogComments', (req, res)=>{
+    Blog.findById(req.body.id, (err, blog)=>{
+        if(err){
+            res.send(err)
+        }else if(blog){
+            var commentsArray = []
+
+            i = 0
+            x = blog.comments.length
+
+            blog.comments.map(comment => {
+                Comments.findById(comment, (err, data)=>{
+                    function update(element){
+                        return commentsArray.push(element)
+                    }
+                    update(data)
+                    i++
+                    if(i == x){
+                        res.send(commentsArray)
+                    }
+                })
+            })
+        }
+    })
+})
+
+//Edit comment on a blog post using the comment Id
+app.post('/editcomment', (req, res)=>{
+    Blog.findById(req.body.blogId, (err, blog)=>{
+        if(err){
+            res.send(err)
+        }else if(!blog){
+            res.send('No blog')
+        }else if(blog){
+            blog.comments.map(comment => {
+                if(comment == req.body.commentId){
+                    Comments.findById(comment, (err, data)=>{
+                        data.name = req.body.name
+                        data.comment = req.body.comment
+                        data.save((err, element)=>{
+                            res.send(element)
+                        })
+                    })
+                }else{
+                    return null
+                }
+            })
+        }else {
+            return null
+        }
+    })
+})
+
+// Delete comment on a blog post using the comment Id
+app.post('/deletecomment', (req, res)=>{
+    Blog.findById(req.body.blogId, (err, blog)=>{
+        if(err){
+            res.send(err)
+        }else if(!blog){
+            res.send('No blog')
+        }else if(blog){
+            blog.comments.map(comment => {
+                if(comment == req.body.commentId){
+                    Comments.findByIdAndDelete(comment, (err, data)=>{
+                        res.send(data)
+                    })
+                    blog.comments = blog.comments.filter(filtered => filtered != comment)
+                    blog.save()
+                }else{
+                    return null
+                }
+            })
+        }else {
+            return null
+        }
+    })
+})
 
 //Invalid route
 app.get('*', (req, res)=>{
