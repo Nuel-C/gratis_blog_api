@@ -6,7 +6,7 @@ const bcrypt = require('bcryptjs')
 const bodyParser = require('body-parser')
 const path = require('path')
 const Blog = require('./models/blog')
-
+const Comments = require('./models/comments')
 
 
 
@@ -158,9 +158,17 @@ app.put('/addComment', (req, res) => {
         if(err){
             res.send(err)
         }else if(blog){
-            blog.comments.push({name: req.body.name, comment: req.body.comment}) 
-            blog.save()
-            res.json(blog)           
+            Comments.create({name: req.body.name, comment: req.body.comment}, (err, comment)=>{
+                if(err){
+                    res.send(err)
+                }else if(comment){
+                    blog.comments.push(comment) 
+                    blog.save()
+                    res.json(blog)
+                }else {
+                    return null
+                }
+            })   
         }else{
             return null
         }
