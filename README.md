@@ -7,7 +7,7 @@ a basic REST API for a blog
 
 #Link to hosted api
 
-. /////////
+. https://gratis-blog-api.herokuapp.com
 
 #Tools used
 
