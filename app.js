@@ -11,8 +11,8 @@ const Comments = require('./models/comments')
 
 
 //Connect to DB
-// mongoose.connect('mongodb+srv://Nuel:chuks@cluster0.ldv66.mongodb.net/gratis_blog?retryWrites=true&w=majority', {useNewUrlParser: true})
-mongoose.connect('mongodb://localhost/gratis', {useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect('mongodb+srv://Nuel:chuks@cluster0.ldv66.mongodb.net/gratis_blog?retryWrites=true&w=majority', {useNewUrlParser: true})
+// mongoose.connect('mongodb://localhost/gratis', {useNewUrlParser: true, useUnifiedTopology: true})
 
 
 //Middleware
